@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "canVFD.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,6 +96,19 @@ int main(void)
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
 
+  if (HAL_FDCAN_ActivateNotification(
+          &hfdcan1,
+          FDCAN_IT_RX_FIFO0_NEW_MESSAGE,
+          0
+      ) != HAL_OK)
+  {
+      Error_Handler();
+  }
+
+  if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK)
+  {
+      Error_Handler();
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,13 +118,15 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	 if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-		 //CAN_IT_RX_FIFO0_MSG_PENDING is an interrupt that triggers whenever a new message is pending in RX FIFO0
-		 Error_Handler();
-	 }
+	 HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+	 HAL_Delay(500);
+	// if (HAL_CAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	//	 FDCAN_IT_RX_FIFO0_MSG_PENDING is an interrupt that triggers whenever a new message is pending in RX FIFO0
+	//	 Error_Handler();
+	// }
 
 	 //Use to toggle LED for debug
-	 //HAL_GPIO_TogglePin()
+
 
   }
   /* USER CODE END 3 */
@@ -236,12 +251,24 @@ static void MX_FDCAN1_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : LED1_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

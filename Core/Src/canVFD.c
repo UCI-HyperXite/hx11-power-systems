@@ -1,5 +1,7 @@
+#include "canVFD.h"
+
 uint8_t		RxData[8]; // 8 bytes
-CAN_RxHeaderTypeDef RxHeader;
+FDCAN_RxHeaderTypeDef RxHeader;
 
 enum drivingDirection {
 	FORWARD,
@@ -7,14 +9,14 @@ enum drivingDirection {
 	REVERSE
 };
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+void HAL_CAN_RxFifo0MsgPendingCallback(FDCAN_HandleTypeDef *hcan) {
 	//overwriting the builtin function that runs when a CAN interrupt is detected
-	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
+	if (HAL_FDCAN_GetRxMessage(hcan, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
 		Error_Handler();
 	}
 
 	//KELLY VFD - 0x10F8109A (driving direction, speed in rpm)
-	if ((RxHeader.ExtID = 0x10F8109A)) { //IDK if RxHeader actually saves this ID here
+	if ((RxHeader.IdType == FDCAN_EXTENDED_ID && RxHeader.Identifier == 0x10F8109A)) { //IDK if RxHeader actually saves this ID here
 
 		enum drivingDirection driveDirection = RxData[0]; // per Kelly VFD spec sheet
 		uint8_t speedLSB = RxData[1];	// 1 RPM/bit
@@ -29,7 +31,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		printf("Error Code: %d", errorCode);
 
 	//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
-	} else if (RxHeader.ExtID = 0x10F8108D) {
+	} else if (RxHeader.IdType == FDCAN_EXTENDED_ID && RxHeader.Identifier == 0x10F8108D) {
 
 		uint8_t batteryVoltageLSB = RxData[0];	// 0.1 V/bit
 		uint8_t batteryVoltageMSB = RxData[1];
