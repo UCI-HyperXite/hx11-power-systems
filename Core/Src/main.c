@@ -96,19 +96,18 @@ int main(void)
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
 
-  if (HAL_FDCAN_ActivateNotification(
-          &hfdcan1,
-          FDCAN_IT_RX_FIFO0_NEW_MESSAGE,
-          0
-      ) != HAL_OK)
-  {
-      Error_Handler();
-  }
-
   if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK)
   {
       Error_Handler();
   }
+
+  // Activate the notification for new data in FIFO0 for FDCAN1
+  //this notification triggers the interrupt
+  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+  {
+      Error_Handler();
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -120,13 +119,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	 HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
 	 HAL_Delay(500);
-	// if (HAL_CAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-	//	 FDCAN_IT_RX_FIFO0_MSG_PENDING is an interrupt that triggers whenever a new message is pending in RX FIFO0
-	//	 Error_Handler();
-	// }
-
-	 //Use to toggle LED for debug
-
 
   }
   /* USER CODE END 3 */
