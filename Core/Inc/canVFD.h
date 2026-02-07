@@ -6,7 +6,6 @@
 
 #include "main.h"
 
-void HAL_CAN_RxFifo0MsgPendingCallback(FDCAN_HandleTypeDef *hcan);
-//replace with fdcan
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs);// RxFifo0ITs using interrupt 0
 
 #endif

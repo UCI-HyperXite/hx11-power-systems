@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+
 #include "canVFD.h"
 /* USER CODE END Includes */
 
@@ -96,6 +98,18 @@ int main(void)
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+
+   FDCAN_FilterTypeDef sFilter;
+   sFilter.IdType = FDCAN_EXTENDED_ID;
+   sFilter.FilterIndex = 0;
+   sFilter.FilterType = FDCAN_FILTER_MASK;
+   sFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+   sFilter.FilterID1 = 0x00000000;   // accept all IDs temporarily - replace with kelly VFD ids once verified
+   sFilter.FilterID2 = 0x00000000;   // mask = 0 → accept everything
+   HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilter);
+
   if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK)
   {
       Error_Handler();
@@ -108,17 +122,19 @@ int main(void)
       Error_Handler();
   }
 
+  volatile uint32_t rxFifo0Level;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  	rxFifo0Level = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  	//HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+		//HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	 HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-	 HAL_Delay(500);
 
   }
   /* USER CODE END 3 */
@@ -151,13 +167,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 32;
-  RCC_OscInitStruct.PLL.PLLN = 129;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 10;
   RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
   RCC_OscInitStruct.PLL.PLLR = 2;
-  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_1;
-  RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
+  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
+  RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOMEDIUM;
   RCC_OscInitStruct.PLL.PLLFRACN = 0;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -214,8 +230,8 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.DataTimeSeg2 = 1;
   hfdcan1.Init.MessageRAMOffset = 0;
   hfdcan1.Init.StdFiltersNbr = 0;
-  hfdcan1.Init.ExtFiltersNbr = 0;
-  hfdcan1.Init.RxFifo0ElmtsNbr = 0;
+  hfdcan1.Init.ExtFiltersNbr = 1;
+  hfdcan1.Init.RxFifo0ElmtsNbr = 4;
   hfdcan1.Init.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8;
   hfdcan1.Init.RxFifo1ElmtsNbr = 0;
   hfdcan1.Init.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8;

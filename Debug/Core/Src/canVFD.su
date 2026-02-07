@@ -1,1 +1,1 @@
-../Core/Src/canVFD.c:12:6:HAL_CAN_RxFifo0MsgPendingCallback	32	static
+../Core/Src/canVFD.c:12:6:HAL_FDCAN_RxFifo0Callback	16	static
