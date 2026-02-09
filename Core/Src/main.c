@@ -60,7 +60,11 @@ static void MX_FDCAN1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int debug0;
+int debug1;
+int debug2;
+int debug3;
+int debug4;
 /* USER CODE END 0 */
 
 /**
@@ -98,8 +102,10 @@ int main(void)
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+  //HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
+
 
    FDCAN_FilterTypeDef sFilter;
    sFilter.IdType = FDCAN_EXTENDED_ID;
@@ -122,14 +128,15 @@ int main(void)
       Error_Handler();
   }
 
-  volatile uint32_t rxFifo0Level;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  	rxFifo0Level = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  	debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  	testFunction(&debug1);
+	  	HAL_Delay(500);
 	  	//HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
 		//HAL_Delay(500);
     /* USER CODE END WHILE */
@@ -220,17 +227,17 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
   hfdcan1.Init.ProtocolException = DISABLE;
-  hfdcan1.Init.NominalPrescaler = 16;
+  hfdcan1.Init.NominalPrescaler = 10;
   hfdcan1.Init.NominalSyncJumpWidth = 1;
-  hfdcan1.Init.NominalTimeSeg1 = 1;
-  hfdcan1.Init.NominalTimeSeg2 = 1;
+  hfdcan1.Init.NominalTimeSeg1 = 13;
+  hfdcan1.Init.NominalTimeSeg2 = 2;
   hfdcan1.Init.DataPrescaler = 1;
   hfdcan1.Init.DataSyncJumpWidth = 1;
   hfdcan1.Init.DataTimeSeg1 = 1;
   hfdcan1.Init.DataTimeSeg2 = 1;
   hfdcan1.Init.MessageRAMOffset = 0;
   hfdcan1.Init.StdFiltersNbr = 0;
-  hfdcan1.Init.ExtFiltersNbr = 1;
+  hfdcan1.Init.ExtFiltersNbr = 2;
   hfdcan1.Init.RxFifo0ElmtsNbr = 4;
   hfdcan1.Init.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8;
   hfdcan1.Init.RxFifo1ElmtsNbr = 0;

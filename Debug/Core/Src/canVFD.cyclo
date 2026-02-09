@@ -1,1 +1,2 @@
-../Core/Src/canVFD.c:12:6:HAL_FDCAN_RxFifo0Callback	4
+../Core/Src/canVFD.c:12:6:testFunction	1
+../Core/Src/canVFD.c:16:6:HAL_FDCAN_RxFifo0Callback	4

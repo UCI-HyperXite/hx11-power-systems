@@ -9,10 +9,15 @@ enum drivingDirection {
 	REVERSE
 };
 
+void testFunction(int *test) {
+	(*test)++;
+}
+
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) { // RxFifo0ITs using interrupt 0
 	//overwriting the builtin function that runs when a CAN interrupt is detected
 
 	if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE)) {
+
 		// While loop to pop messages from the queue (useful in event of multiple msg arriving at once
 		while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0) {
 
@@ -21,8 +26,6 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			}
 
 		  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-			HAL_Delay(500);
-
 			/*if (RxHeader.IdType == FDCAN_EXTENDED_ID) {
 				switch (RxHeader.Identifier) {
 				//other can peripherals can be added here
