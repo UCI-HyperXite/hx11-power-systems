@@ -3,14 +3,40 @@
 uint8_t		RxData[8]; // 8 bytes
 FDCAN_RxHeaderTypeDef RxHeader;
 
-enum drivingDirection {
+/*enum drivingDirection {
 	FORWARD,
 	NEUTRAL,
 	REVERSE
-};
+};*/
 
 void testFunction(int *test) {
 	(*test)++;
+}
+
+void process_CAN_msgs(void) {
+	while (tail != head) {
+		CAN_Message currentMessage = canQ[tail];
+		tail = (tail + 1) % CAN_QUEUE_SIZE;
+
+		//other can peripherals can be added here as cases w/ their ID
+		switch (currentMessage.id) {
+		//KELLY VFD - 0x10F8109A (driving direction, speed in rpm)
+		case 0x10F8109A:
+			//ummmmm controls might want to write this part now... idk how to log dataa
+			uint8_t speedLSB = RxData[1];	// 1 RPM/bit
+			uint8_t speedMSB = RxData[2];
+			uint8_t errorCode = RxData[3];	//see table 1 of Kelly VFD datasheet
+		case 0x10F8108D:
+			uint8_t batteryVoltageLSB = RxData[0];	// 0.1 V/bit
+			uint8_t batteryVoltageMSB = RxData[1];
+			uint8_t motorCurrentLSB = RxData[2];	// 0.1 A.bit
+			uint8_t motorCurrentMSB = RxData[3];
+			uint8_t motorTempLSB = RxData[4]; 		// 0.1 C/bit
+			uint8_t motorTempMSB = RxData[5];
+			uint8_t controllerTempLSB = RxData[6]; 	// 0.1 C/bit
+			uint8_t controllerTempMSB = RxData[7];
+		}
+	}
 }
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) { // RxFifo0ITs using interrupt 0
@@ -26,15 +52,22 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			}
 
 		  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+
+		  	int next = (head + 1) % CAN_QUEUE_SIZE;
+
+		  	if (next != tail) {
+		  		canQ[head].id = RxHeader.Identifier;
+		  		memcpy(canQ[head].data, RxData, 8);
+		  		head = next;
+		  	}
+
 			/*if (RxHeader.IdType == FDCAN_EXTENDED_ID) {
 				switch (RxHeader.Identifier) {
 				//other can peripherals can be added here
 					//KELLY VFD - 0x10F8109A (driving direction, speed in rpm)
 					case 0x10F8109A:
 						enum drivingDirection driveDirection = RxData[0]; // per Kelly VFD spec sheet
-						uint8_t speedLSB = RxData[1];	// 1 RPM/bit
-						uint8_t speedMSB = RxData[2];
-						uint8_t errorCode = RxData[3];	//see table 1 of Kelly VFD datasheet
+
 
 						//IMPORTANT: PROOF OF CONCEPT, should NOT have prints inside ISR
 						printf("Driving Direction: %s\n", driveDirection);
@@ -47,14 +80,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 					//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
 					case 0x10F8108D:
 
-						uint8_t batteryVoltageLSB = RxData[0];	// 0.1 V/bit
-						uint8_t batteryVoltageMSB = RxData[1];
-						uint8_t motorCurrentLSB = RxData[2];	// 0.1 A.bit
-						uint8_t motorCurrentMSB = RxData[3];
-						uint8_t motorTempLSB = RxData[4]; 		// 0.1 C/bit
-						uint8_t motorTempMSB = RxData[5];
-						uint8_t controllerTempLSB = RxData[6]; 	// 0.1 C/bit
-						uint8_t controllerTempMSB = RxData[7];
+
 
 						printf("Battery Voltage: %d", batteryVoltageMSB);
 						printf("%d\n", batteryVoltageLSB);
