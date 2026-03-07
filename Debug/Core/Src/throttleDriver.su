@@ -1,0 +1,2 @@
+../Core/Src/throttleDriver.c:7:6:throttleTest	16	static
+../Core/Src/throttleDriver.c:34:6:throttleDrive	24	static

@@ -2,18 +2,14 @@
 #define THROTTLE
 
 
-#include "stm32h7xx_hal.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "stm32h7xx_hal.h"
 
-void throttleTest(int targetV);
-/*
-void encoderSimThread();
+extern DAC_HandleTypeDef hdac1; //defined in main
 
-void clamp(int32_t *in);
+void throttleTest();
 
-bool setThrottle();
-*/
 #endif

@@ -25,6 +25,7 @@
 
 #include "canVFD.h"
 #include "throttleDriver.h"
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +51,9 @@ FDCAN_HandleTypeDef hfdcan1;
 
 TIM_HandleTypeDef htim2;
 
+FDCAN_ErrorCountersTypeDef counters;
+FDCAN_ProtocolStatusTypeDef status;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -72,6 +76,8 @@ int debug1;
 int debug2;
 int debug3;
 int debug4;
+
+
 /* USER CODE END 0 */
 
 /**
@@ -111,6 +117,7 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  //=============================== CAN INITIALIZATION ===========================
   HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
   //HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
@@ -137,25 +144,39 @@ int main(void)
       Error_Handler();
   }
 
+  //=============================================================================
+
+  //============================== ENCODER INITIALIZATION =======================
+  HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+  //=============================================================================
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
+  {		//CAN testing
 	  	debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
-	  	testFunction(&debug1);
+
+	  	HAL_FDCAN_GetErrorCounters(&hfdcan1, &counters);
+
+	  	debug2 = counters.RxErrorCnt;
+	  	debug4 = counters.TxErrorCnt;
+
+
+	  	//testFunction(&debug1);
+
+	  	//led blink for heartbeat
 	  	HAL_Delay(500);
-	  	//HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-		//HAL_Delay(500);
+	  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+		HAL_Delay(500);
+
+		//debug encoder
+		debug3 = __HAL_TIM_GET_COUNTER(&htim2);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  	//still need to start the encoder
-	  	int32_t encoderRawVal= __HAL_TIM_GET_COUNTER(&htim2);
-	  	throttleTest();
-	  	throttleDrive(encoderRawVal);
+  }
   /* USER CODE END 3 */
 }
 
@@ -338,12 +359,12 @@ static void MX_TIM2_Init(void)
   htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
-  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
+  sConfig.IC1Polarity = TIM_ICPOLARITY_FALLING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
   sConfig.IC1Filter = 0;
-  sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC2Polarity = TIM_ICPOLARITY_FALLING;
   sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
   sConfig.IC2Filter = 0;

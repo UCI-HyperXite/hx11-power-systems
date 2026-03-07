@@ -3,6 +3,10 @@
 uint8_t		RxData[8]; // 8 bytes
 FDCAN_RxHeaderTypeDef RxHeader;
 
+int head = 0;
+int tail = 0;
+
+CAN_Message canQ[CAN_QUEUE_SIZE];
 
 void testFunction(int *test) {
 	(*test)++;
@@ -37,7 +41,7 @@ void process_CAN_msgs(void) {
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) { // RxFifo0ITs using interrupt 0
 	//overriding the builtin function that runs when a CAN interrupt is detected
-
+  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1); //LED for physical sign that interrupt is triggered
 	if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE)) { //If Interrupt flag is 1 AND there is a new message in the queue...
 
 		// While loop to pop messages from the queue (useful in event of multiple msg arriving at once
@@ -47,13 +51,13 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 				Error_Handler();
 			}
 
-		  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1); //LED for physical sign that interrupt is triggered
-
 		  	int next = (head + 1) % CAN_QUEUE_SIZE;
 
 		  	if (next != tail) {
 		  		canQ[head].id = RxHeader.Identifier;
-		  		memcpy(canQ[head].data, RxData, 8);
+		  		for (int i = 0; i < 8; i++) {
+		  			canQ[head].data[i] = RxData[i];
+		  		}
 		  		head = next;
 		  	}
 		}

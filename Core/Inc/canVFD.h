@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "main.h"
+#include "stm32h7xx_hal.h"
 
 #define CAN_QUEUE_SIZE 32
 
@@ -14,8 +14,8 @@ typedef struct {
 } CAN_Message;
 
 extern CAN_Message canQ[CAN_QUEUE_SIZE]; //declaring array of can messages
-extern int head = 0;
-extern int tail = 0;
+extern int head;
+extern int tail;
 
 void testFunction(int *test);
 
