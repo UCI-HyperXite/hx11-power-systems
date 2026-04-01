@@ -21,20 +21,19 @@ void process_CAN_msgs(void) {
 		switch (currentMessage.id) {
 		//KELLY VFD - 0x10F8109A (driving direction, speed in rpm)
 		case 0x10F8109A:
-			//ummmmm controls might want to write this part now... idk how to log dataa
-			uint8_t speedLSB = currentMessage.data[1];	// 1 RPM/bit
-			uint8_t speedMSB = currentMessage.data[2];
-			uint8_t errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
+			speedLSB = currentMessage.data[1];	// LSB of speed 1 RPM/bit
+			speedMSB = currentMessage.data[2];  // MSB of speed
+			errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
 		//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
 		case 0x10F8108D:
-			uint8_t batteryVoltageLSB = currentMessage.data[0];	// 0.1 V/bit
-			uint8_t batteryVoltageMSB = currentMessage.data[1];
-			uint8_t motorCurrentLSB = currentMessage.data[2];	// 0.1 A.bit
-			uint8_t motorCurrentMSB = currentMessage.data[3];
-			uint8_t motorTempLSB = currentMessage.data[4]; 		// 0.1 C/bit
-			uint8_t motorTempMSB = currentMessage.data[5];
-			uint8_t controllerTempLSB = currentMessage.data[6]; 	// 0.1 C/bit
-			uint8_t controllerTempMSB = currentMessage.data[7];
+			batteryVoltageLSB = currentMessage.data[0];	// 0.1 V/bit
+			batteryVoltageMSB = currentMessage.data[1];
+			motorCurrentLSB = currentMessage.data[2];	// 0.1 A.bit
+			motorCurrentMSB = currentMessage.data[3];
+			motorTempLSB = currentMessage.data[4]; 		// 0.1 C/bit
+			motorTempMSB = currentMessage.data[5];
+			controllerTempLSB = currentMessage.data[6]; 	// 0.1 C/bit
+			 controllerTempMSB = currentMessage.data[7];
 		}
 	}
 }

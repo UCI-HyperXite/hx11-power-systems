@@ -51,9 +51,6 @@ FDCAN_HandleTypeDef hfdcan1;
 
 TIM_HandleTypeDef htim2;
 
-FDCAN_ErrorCountersTypeDef counters;
-FDCAN_ProtocolStatusTypeDef status;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -76,6 +73,18 @@ int debug1;
 int debug2;
 int debug3;
 int debug4;
+
+uint8_t speedLSB;
+uint8_t speedMSB;
+uint8_t errorCode;
+uint8_t batteryVoltageLSB;
+uint8_t batteryVoltageMSB;
+uint8_t motorCurrentLSB;
+uint8_t motorCurrentMSB;
+uint8_t motorTempLSB;
+uint8_t motorTempMSB;
+uint8_t controllerTempLSB;
+uint8_t controllerTempMSB;
 
 
 /* USER CODE END 0 */
@@ -150,6 +159,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   //=============================================================================
 
+  //PID throttlePID;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -157,22 +167,10 @@ int main(void)
   while (1)
   {		//CAN testing
 	  	debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
-
-	  	HAL_FDCAN_GetErrorCounters(&hfdcan1, &counters);
-
-	  	debug2 = counters.RxErrorCnt;
-	  	debug4 = counters.TxErrorCnt;
-
-
-	  	//testFunction(&debug1);
-
 	  	//led blink for heartbeat
-	  	HAL_Delay(500);
-	  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-		HAL_Delay(500);
-
-		//debug encoder
-		debug3 = __HAL_TIM_GET_COUNTER(&htim2);
+	  	//HAL_Delay(500);
+	  	//HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+		//HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
