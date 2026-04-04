@@ -166,11 +166,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {		//CAN testing
-	  	debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
-	  	//led blink for heartbeat
-	  	//HAL_Delay(500);
-	  	//HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-		//HAL_Delay(500);
+	  	//debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+
+	  	throttleTest();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

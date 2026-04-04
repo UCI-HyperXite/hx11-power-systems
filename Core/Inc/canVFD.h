@@ -28,8 +28,15 @@ extern uint8_t motorTempLSB;
 extern uint8_t motorTempMSB;
 extern uint8_t controllerTempLSB;
 extern uint8_t controllerTempMSB;
+extern uint8_t packSOC;
+extern uint16_t lowestCellVoltage;
+extern uint16_t avgCellVoltage;
+extern uint16_t highestCellVoltage;
+extern int bmsTestCounter;
 
 void testFunction(int *test);
+
+uint16_t concatenate(uint8_t x, uint8_t y);
 
 void process_CAN_msgs(void);
 

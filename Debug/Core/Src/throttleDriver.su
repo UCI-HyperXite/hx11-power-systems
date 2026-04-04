@@ -1,5 +1,5 @@
 ../Core/Src/throttleDriver.c:3:10:concatenate	24	static
 ../Core/Src/throttleDriver.c:12:6:throttleTest	16	static
-../Core/Src/throttleDriver.c:38:6:PIDInit	16	static
-../Core/Src/throttleDriver.c:50:7:throttlePID	48	static
-../Core/Src/throttleDriver.c:75:6:driveDAC	24	static
+../Core/Src/throttleDriver.c:42:6:PIDInit	16	static
+../Core/Src/throttleDriver.c:54:7:throttlePID	48	static
+../Core/Src/throttleDriver.c:79:6:driveDAC	24	static

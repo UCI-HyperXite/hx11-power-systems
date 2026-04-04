@@ -12,6 +12,14 @@ void testFunction(int *test) {
 	(*test)++;
 }
 
+uint16_t concatenate(uint8_t x, uint8_t y) {
+	uint16_t pow = 10;
+	while (y >= pow) {
+		pow *= 10;
+	}
+	return x * pow + y;
+}
+
 void process_CAN_msgs(void) {
 	while (tail != head) {
 		CAN_Message currentMessage = canQ[tail];
@@ -33,14 +41,28 @@ void process_CAN_msgs(void) {
 			motorTempLSB = currentMessage.data[4]; 		// 0.1 C/bit
 			motorTempMSB = currentMessage.data[5];
 			controllerTempLSB = currentMessage.data[6]; 	// 0.1 C/bit
-			 controllerTempMSB = currentMessage.data[7];
+			controllerTempMSB = currentMessage.data[7];
+		case 0x10DEADBE:
+			lowestCellVoltage = concatenate(currentMessage.data[0], currentMessage.data[1]);
+			avgCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
+			highestCellVoltage = concatenate(currentMessage.data[4], currentMessage.data[5]);
+			packSOC = currentMessage.data[6];
+			bmsTestCounter = currentMessage.data[7];
+		case 0x18FF01F4:
+			insulationResistance = concatenate(currentMessage.data[0], currentMessage.data[1]);
+			iso_status = currentMessage.data[2];
+			imd_counter = currentMessage.data[3];
+			imd_warnings = concatenate(currentMessage.data[4], currentMessage.data[5]);
+			deviceActivity = currentMessage.data[6];
+
+
+
 		}
 	}
 }
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) { // RxFifo0ITs using interrupt 0
 	//overriding the builtin function that runs when a CAN interrupt is detected
-  	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1); //LED for physical sign that interrupt is triggered
 	if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE)) { //If Interrupt flag is 1 AND there is a new message in the queue...
 
 		// While loop to pop messages from the queue (useful in event of multiple msg arriving at once
