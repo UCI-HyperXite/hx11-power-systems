@@ -28,11 +28,18 @@ extern uint8_t motorTempLSB;
 extern uint8_t motorTempMSB;
 extern uint8_t controllerTempLSB;
 extern uint8_t controllerTempMSB;
+
 extern uint8_t packSOC;
 extern uint16_t lowestCellVoltage;
 extern uint16_t avgCellVoltage;
 extern uint16_t highestCellVoltage;
 extern int bmsTestCounter;
+
+extern uint16_t insulationResistance;
+extern uint8_t iso_status;
+extern uint8_t imd_counter;
+extern uint16_t imd_warnings;
+extern uint8_t deviceActivity;
 
 void testFunction(int *test);
 

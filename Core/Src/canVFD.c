@@ -32,6 +32,7 @@ void process_CAN_msgs(void) {
 			speedLSB = currentMessage.data[1];	// LSB of speed 1 RPM/bit
 			speedMSB = currentMessage.data[2];  // MSB of speed
 			errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
+			break;
 		//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
 		case 0x10F8108D:
 			batteryVoltageLSB = currentMessage.data[0];	// 0.1 V/bit
@@ -42,18 +43,21 @@ void process_CAN_msgs(void) {
 			motorTempMSB = currentMessage.data[5];
 			controllerTempLSB = currentMessage.data[6]; 	// 0.1 C/bit
 			controllerTempMSB = currentMessage.data[7];
+			break;
 		case 0x10DEADBE:
 			lowestCellVoltage = concatenate(currentMessage.data[0], currentMessage.data[1]);
 			avgCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
 			highestCellVoltage = concatenate(currentMessage.data[4], currentMessage.data[5]);
 			packSOC = currentMessage.data[6];
 			bmsTestCounter = currentMessage.data[7];
+			break;
 		case 0x18FF01F4:
 			insulationResistance = concatenate(currentMessage.data[0], currentMessage.data[1]);
 			iso_status = currentMessage.data[2];
 			imd_counter = currentMessage.data[3];
 			imd_warnings = concatenate(currentMessage.data[4], currentMessage.data[5]);
 			deviceActivity = currentMessage.data[6];
+			break;
 
 
 
