@@ -1,5 +1,3 @@
-../Core/Src/throttleDriver.c:3:10:concatenate	2
-../Core/Src/throttleDriver.c:12:6:throttleTest	5
-../Core/Src/throttleDriver.c:42:6:PIDInit	1
-../Core/Src/throttleDriver.c:54:7:throttlePID	3
-../Core/Src/throttleDriver.c:79:6:driveDAC	1
+../Core/Src/throttleDriver.c:4:6:throttleTest	5
+../Core/Src/throttleDriver.c:30:6:accelerate	2
+../Core/Src/throttleDriver.c:39:6:killThrottle	1

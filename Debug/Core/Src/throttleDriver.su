@@ -1,5 +1,3 @@
-../Core/Src/throttleDriver.c:3:10:concatenate	24	static
-../Core/Src/throttleDriver.c:12:6:throttleTest	16	static
-../Core/Src/throttleDriver.c:42:6:PIDInit	16	static
-../Core/Src/throttleDriver.c:54:7:throttlePID	48	static
-../Core/Src/throttleDriver.c:79:6:driveDAC	24	static
+../Core/Src/throttleDriver.c:4:6:throttleTest	16	static
+../Core/Src/throttleDriver.c:30:6:accelerate	16	static
+../Core/Src/throttleDriver.c:39:6:killThrottle	8	static

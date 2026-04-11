@@ -89,6 +89,19 @@ uint8_t motorTempMSB;
 uint8_t controllerTempLSB;
 uint8_t controllerTempMSB;
 
+uint16_t totalspeed;
+
+uint8_t packSOC;
+uint16_t lowestCellVoltage;
+uint16_t avgCellVoltage;
+uint16_t highestCellVoltage;
+int bmsTestCounter;
+
+uint16_t insulationResistance;
+uint8_t iso_status;
+uint8_t imd_counter;
+uint16_t imd_warnings;
+uint8_t deviceActivity;
 
 /* USER CODE END 0 */
 
@@ -170,9 +183,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {		//CAN testing
-	  	//debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
 
-	  	throttleTest();
+	  process_CAN_msgs();
+
+	  HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
+	  HAL_Delay(500);
+	  	//throttleTest();
 
     /* USER CODE END WHILE */
 

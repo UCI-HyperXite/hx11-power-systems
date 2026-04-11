@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := hyperXite
+BUILD_ARTIFACT_NAME := hx11-power-systems
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-hyperXite.elf \
+hx11-power-systems.elf \
 
 MAP_FILES += \
-hyperXite.map \
+hx11-power-systems.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-hyperXite.list \
+hx11-power-systems.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: hyperXite.elf secondary-outputs
+main-build: hx11-power-systems.elf secondary-outputs
 
 # Tool invocations
-hyperXite.elf hyperXite.map: $(OBJS) $(USER_OBJS) C:\Users\yongj\OneDrive\Desktop\Projects\HyperXite\hyperXite\STM32H753ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "hyperXite.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\yongj\OneDrive\Desktop\Projects\HyperXite\hyperXite\STM32H753ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="hyperXite.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+hx11-power-systems.elf hx11-power-systems.map: $(OBJS) $(USER_OBJS) C:\Users\sofia\STM32CubeIDE\HX11-Power\hx11-power-systems\STM32H753ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "hx11-power-systems.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\sofia\STM32CubeIDE\HX11-Power\hx11-power-systems\STM32H753ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="hx11-power-systems.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-hyperXite.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "hyperXite.list"
+hx11-power-systems.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "hx11-power-systems.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout hyperXite.elf hyperXite.list hyperXite.map
+	-$(RM) default.size.stdout hx11-power-systems.elf hx11-power-systems.list hx11-power-systems.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
