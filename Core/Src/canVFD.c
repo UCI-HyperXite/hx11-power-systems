@@ -56,7 +56,7 @@ void process_CAN_msgs(void) {
 			//284692634
 			speedLSB = currentMessage.data[1];	// LSB of speed 1 RPM/bit
 			speedMSB = currentMessage.data[2];  // MSB of speed
-			totalspeed = concatenate(speedMSB, speedLSB); //sofia addtion
+			totalspeed = concatenate(speedMSB, speedLSB);
 			errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
 			break;
 		//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
@@ -80,9 +80,13 @@ void process_CAN_msgs(void) {
 			bmsTestCounter = currentMessage.data[7];
 			break;
 		case 0x18FF01F4:
+			// 419365364
 			insulationResistance = concatenate(currentMessage.data[0], currentMessage.data[1]);
+			// reading is range from x00 to xFE (254 decimal) where xFE means measurement is most reliable
 			iso_status = currentMessage.data[2];
+			// should continually increment, if not there's a problem (like a freeze or reset)
 			imd_counter = currentMessage.data[3];
+
 			imd_warnings = concatenate(currentMessage.data[4], currentMessage.data[5]);
 			deviceActivity = currentMessage.data[6];
 			break;
