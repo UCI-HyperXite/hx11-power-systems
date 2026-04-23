@@ -82,7 +82,7 @@ TIM2 runs in quadrature encoder mode on PA0/PA1, counting both edges of both cha
 
 ## Acknowledgments
 
-[PCBWay](https://www.pcbway.com/) is sponsoring the fabrication of the HX11 controls carrier board. The board is a 4-layer design that connects the Nucleo-H753ZI to every sensor and actuator on the pod: dual CAN buses for high-voltage device communication, five I2C sensors for current/voltage/motion data, eight thermistor channels for thermal monitoring, an I2C DAC for throttle output, SDMMC for SD card logging, and UART for ESP32 wireless telemetry. Getting clean analog readings next to high-speed digital buses on the same board takes careful layout, and PCBWay's fabrication quality gave us the confidence to iterate quickly on that design within a few months of our 2026 Demonstration Day deadline. We are incredibly grateful for their support of student engineering!
+[PCBWay](https://www.pcbway.com/) is sponsoring the fabrication of the HX11 controls carrier board. The board is a 4-layer design that connects the Nucleo-H753ZI to every sensor and actuator on the pod: dual CAN buses for high-voltage device communication, five I2C sensors for current/voltage/motion data, eight thermistor channels for thermal monitoring, an I2C DAC for throttle output, SDMMC for SD card logging, and UART for ESP32 wireless telemetry. PCBWay's fabrication quality and turnaround time let a student team iterate on this board within a few months of our Demo Day deadline. We are incredibly grateful for their support of student engineering!
 
 ## License
 
