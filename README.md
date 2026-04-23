@@ -76,10 +76,6 @@ The DAC outputs a 0-3.3V analog signal on PA5. An MCP4725 breakout on the PCBWay
 - `accelerate()` ramps monotonically from 0V to full scale.
 - `killThrottle()` writes 0 to the DAC immediately for emergency shutdown.
 
-### Encoder Interface
-
-TIM2 runs in quadrature encoder mode on PA0/PA1, counting both edges of both channels (TI12 mode). This provides shaft position feedback that the control system will convert to velocity for closed-loop speed control.
-
 ## Acknowledgments
 
 [PCBWay](https://www.pcbway.com/) is sponsoring the fabrication of the HX11 controls carrier board. The board is a 4-layer design that connects the Nucleo-H753ZI to every sensor and actuator on the pod: dual CAN buses for high-voltage device communication, five I2C sensors for current/voltage/motion data, eight thermistor channels for thermal monitoring, an I2C DAC for throttle output, SDMMC for SD card logging, and UART for ESP32 wireless telemetry. PCBWay's fabrication quality and turnaround time let a student team iterate on this board within a few months of our Demo Day deadline. We are incredibly grateful for their support of student engineering!
