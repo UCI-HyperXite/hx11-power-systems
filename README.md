@@ -82,4 +82,4 @@ The DAC outputs a 0-3.3V analog signal on PA5. An MCP4725 breakout on the PCBWay
 
 ## License
 
-This project is developed as part of UC Irvine HyperXite's academic and competition activities. Please contact the team for licensing inquiries.
+This project is developed as part of UC Irvine HyperXite's academic and competition activities. Please contact the team at ucihyperxite@gmail.com for licensing inquiries.
