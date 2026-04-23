@@ -12,11 +12,11 @@
 
 This is the STM32H753ZI firmware for the high-voltage power subsystem on the HX11 pod. It handles communication with the three devices that make up the pod's high-voltage bus:
 
-- **Kelly KHA32020I Variable Frequency Drive (VFD)**, which drives the double-sided linear induction motor (DSLIM) via V/Hz control
+- **Kelly KHA32020I Variable Frequency Drive (VFD)**, which drives the double-sided linear induction motor (DSLIM) via field-oriented control (FOC)
 - **Orion BMS 2**, which reports cell voltages and pack state of charge
 - **Bender iso175 Insulation Monitoring Device (IMD)**, which continuously measures insulation resistance between the HV bus and chassis ground
 
-The firmware collects their data into a set of global telemetry variables that the rest of the control system processes.
+The firmware collects its data into a set of global telemetry variables that the rest of the control system processes.
 
 This module is one piece of a larger codebase. It will merge into the HX11 master firmware, which features FreeRTOS task scheduling, a finite state machine with safety interlocks, INA260 current/voltage sensing, thermistor readout, SD card logging, and an ESP32-based telemetry GUI. The controls PCB that ties all of this together is a custom 4-layer board fabricated by [PCBWay](https://www.pcbway.com/), who is sponsoring HyperXite's hardware for this year's pod iteration.
 
