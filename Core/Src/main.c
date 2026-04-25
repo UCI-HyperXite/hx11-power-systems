@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 
-#include "canVFD.h"
+#include "can.h"
 #include "throttleDriver.h"
 #include "encoder.h"
 /* USER CODE END Includes */
@@ -48,6 +48,7 @@
 DAC_HandleTypeDef hdac1;
 
 FDCAN_HandleTypeDef hfdcan1;
+FDCAN_HandleTypeDef hfdcan2;
 
 I2C_HandleTypeDef hi2c1;
 
@@ -65,6 +66,7 @@ static void MX_FDCAN1_Init(void);
 static void MX_DAC1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_FDCAN2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -141,34 +143,90 @@ int main(void)
   MX_DAC1_Init();
   MX_TIM2_Init();
   MX_I2C1_Init();
+  MX_FDCAN2_Init();
   /* USER CODE BEGIN 2 */
 
   //=============================== CAN INITIALIZATION ===========================
+
+  // can line 1
   HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
-  //HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
+
+  //can line 2
+  HAL_NVIC_SetPriority(FDCAN2_IT1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
 
 
+  /*
    FDCAN_FilterTypeDef sFilter;
+
+   // ----- FDCAN2 (500 kbps) -----
    sFilter.IdType = FDCAN_EXTENDED_ID;
    sFilter.FilterIndex = 0;
    sFilter.FilterType = FDCAN_FILTER_MASK;
-   sFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+   sFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO1;
    sFilter.FilterID1 = 0x00000000;   // accept all IDs temporarily - replace with kelly VFD ids once verified
    sFilter.FilterID2 = 0x00000000;   // mask = 0 → accept everything
+   HAL_FDCAN_ConfigFilter(&hfdcan2, &sFilter);
+
+   // ----- FDCAN1 (250 kbps) -----
+   sFilter.FilterIndex = 1;
+   sFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
    HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilter);
+*/
 
-  if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK)
+
+  //CAN2 filter (250)
+  FDCAN_FilterTypeDef filter2;
+  filter2.IdType = FDCAN_EXTENDED_ID;
+  filter2.FilterIndex = 1;
+  filter2.FilterType = FDCAN_FILTER_MASK;
+  filter2.FilterConfig = FDCAN_FILTER_TO_RXFIFO1;
+  filter2.FilterID1 = 0;
+  filter2.FilterID2 = 0;
+
+  HAL_FDCAN_ConfigFilter(&hfdcan2, &filter2);
+
+/*
+  // CAN1 filter (500)
+
+  FDCAN_FilterTypeDef filter1;
+  filter1.IdType = FDCAN_EXTENDED_ID;
+  filter1.FilterIndex = 0;
+  filter1.FilterType = FDCAN_FILTER_MASK;
+  filter1.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+  filter1.FilterID1 = 0;
+  filter1.FilterID2 = 0;
+
+  HAL_FDCAN_ConfigFilter(&hfdcan1, &filter1);
+*/
+
+  if ((HAL_FDCAN_Start(&hfdcan1) != HAL_OK))
   {
       Error_Handler();
   }
 
-  // Activate the notification for new data in FIFO0 for FDCAN1
+  if ((HAL_FDCAN_Start(&hfdcan2) != HAL_OK))
+    {
+        Error_Handler();
+    }
+
+
+  HAL_FDCAN_ConfigInterruptLines(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, FDCAN_INTERRUPT_LINE0);
+
+  HAL_FDCAN_ConfigInterruptLines(&hfdcan2, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, FDCAN_INTERRUPT_LINE1);
+
+  // Activate the notification for new data in FIFO0 for FDCAN1, FIFO1 for FDCAN2
   //this notification triggers the interrupt
-  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+  if ((HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK))
   {
       Error_Handler();
   }
+
+  if ((HAL_FDCAN_ActivateNotification(&hfdcan2, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0) != HAL_OK))
+    {
+        Error_Handler();
+    }
 
   //=============================================================================
 
@@ -183,13 +241,19 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {		//CAN testing
-	  debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
 
-	  process_CAN_msgs();
+	  	//debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
 
-	  HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_1);
-	  HAL_Delay(500);
-	  	//throttleTest();
+	  	HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+		HAL_Delay(500);
+		//process_CAN250_msgs();
+		//process_CAN500_msgs();
+
+		debug1 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan2, FDCAN_RX_FIFO1);
+		debug2 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+
+
 
     /* USER CODE END WHILE */
 
@@ -323,7 +387,7 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
   hfdcan1.Init.ProtocolException = DISABLE;
-  hfdcan1.Init.NominalPrescaler = 10;
+  hfdcan1.Init.NominalPrescaler = 5;
   hfdcan1.Init.NominalSyncJumpWidth = 1;
   hfdcan1.Init.NominalTimeSeg1 = 13;
   hfdcan1.Init.NominalTimeSeg2 = 2;
@@ -352,6 +416,59 @@ static void MX_FDCAN1_Init(void)
   /* USER CODE BEGIN FDCAN1_Init 2 */
 
   /* USER CODE END FDCAN1_Init 2 */
+
+}
+
+/**
+  * @brief FDCAN2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_FDCAN2_Init(void)
+{
+
+  /* USER CODE BEGIN FDCAN2_Init 0 */
+
+  /* USER CODE END FDCAN2_Init 0 */
+
+  /* USER CODE BEGIN FDCAN2_Init 1 */
+
+  /* USER CODE END FDCAN2_Init 1 */
+  hfdcan2.Instance = FDCAN2;
+  hfdcan2.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
+  hfdcan2.Init.Mode = FDCAN_MODE_NORMAL;
+  hfdcan2.Init.AutoRetransmission = DISABLE;
+  hfdcan2.Init.TransmitPause = DISABLE;
+  hfdcan2.Init.ProtocolException = DISABLE;
+  hfdcan2.Init.NominalPrescaler = 10;
+  hfdcan2.Init.NominalSyncJumpWidth = 1;
+  hfdcan2.Init.NominalTimeSeg1 = 13;
+  hfdcan2.Init.NominalTimeSeg2 = 2;
+  hfdcan2.Init.DataPrescaler = 1;
+  hfdcan2.Init.DataSyncJumpWidth = 1;
+  hfdcan2.Init.DataTimeSeg1 = 1;
+  hfdcan2.Init.DataTimeSeg2 = 1;
+  hfdcan2.Init.MessageRAMOffset = 0;
+  hfdcan2.Init.StdFiltersNbr = 0;
+  hfdcan2.Init.ExtFiltersNbr = 2;
+  hfdcan2.Init.RxFifo0ElmtsNbr = 0;
+  hfdcan2.Init.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8;
+  hfdcan2.Init.RxFifo1ElmtsNbr = 10;
+  hfdcan2.Init.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8;
+  hfdcan2.Init.RxBuffersNbr = 0;
+  hfdcan2.Init.RxBufferSize = FDCAN_DATA_BYTES_8;
+  hfdcan2.Init.TxEventsNbr = 0;
+  hfdcan2.Init.TxBuffersNbr = 0;
+  hfdcan2.Init.TxFifoQueueElmtsNbr = 0;
+  hfdcan2.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
+  hfdcan2.Init.TxElmtSize = FDCAN_DATA_BYTES_8;
+  if (HAL_FDCAN_Init(&hfdcan2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN FDCAN2_Init 2 */
+
+  /* USER CODE END FDCAN2_Init 2 */
 
 }
 
@@ -466,8 +583,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -532,8 +649,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

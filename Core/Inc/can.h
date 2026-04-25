@@ -1,5 +1,5 @@
-#ifndef VFDCAN
-#define VFDCAN
+#ifndef CAN
+#define CAN
 
 #include <stdio.h>
 #include <stdint.h>
@@ -14,11 +14,14 @@ typedef struct {
 	uint8_t data[8];
 } CAN_Message;
 
-extern CAN_Message canQ[CAN_QUEUE_SIZE]; //declaring array of can messages
-extern uint32_t unknownIDs[UNKNOWN_LOG_SIZE];
-extern int head;
-extern int tail;
-extern int value;
+extern CAN_Message canQ250[CAN_QUEUE_SIZE]; //declaring array of can messages
+extern volatile int head250;
+extern volatile int tail250;
+
+extern CAN_Message canQ500[CAN_QUEUE_SIZE]; //declaring array of can messages
+extern volatile int head500;
+extern volatile int tail500;
+extern int x;
 
 extern uint8_t speedLSB;
 extern uint8_t speedMSB;
@@ -45,17 +48,16 @@ extern uint8_t imd_counter;
 extern uint16_t imd_warnings;
 extern uint8_t deviceActivity;
 
-void testFunction(int *test);
-
 uint16_t concatenate(uint8_t x, uint8_t y);
+
+void process_CAN250_msgs(void);
 
 int isDuplicate(uint32_t id);
 
-void process_CAN_msgs(void);
+void process_CAN500_msgs(void);
 
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs);// RxFifo0ITs using interrupt 0
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs);// RxFifo0ITs using interrupt 0
 
-
-
+void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan2, uint32_t RxFifo1ITs);
 
 #endif
