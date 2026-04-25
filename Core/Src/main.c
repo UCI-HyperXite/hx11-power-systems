@@ -78,6 +78,7 @@ int debug1;
 int debug2;
 int debug3;
 int debug4;
+int debug5;
 
 uint8_t speedLSB;
 uint8_t speedMSB;
@@ -146,7 +147,6 @@ int main(void)
   MX_FDCAN2_Init();
   /* USER CODE BEGIN 2 */
 
-  //=============================== CAN INITIALIZATION ===========================
 
   // can line 1
   HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 5, 0);
@@ -177,6 +177,7 @@ int main(void)
 
 
   //CAN2 filter (250)
+
   FDCAN_FilterTypeDef filter2;
   filter2.IdType = FDCAN_EXTENDED_ID;
   filter2.FilterIndex = 1;
@@ -187,7 +188,8 @@ int main(void)
 
   HAL_FDCAN_ConfigFilter(&hfdcan2, &filter2);
 
-/*
+
+
   // CAN1 filter (500)
 
   FDCAN_FilterTypeDef filter1;
@@ -199,7 +201,7 @@ int main(void)
   filter1.FilterID2 = 0;
 
   HAL_FDCAN_ConfigFilter(&hfdcan1, &filter1);
-*/
+
 
   if ((HAL_FDCAN_Start(&hfdcan1) != HAL_OK))
   {
@@ -387,7 +389,7 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
   hfdcan1.Init.ProtocolException = DISABLE;
-  hfdcan1.Init.NominalPrescaler = 5;
+  hfdcan1.Init.NominalPrescaler = 10;
   hfdcan1.Init.NominalSyncJumpWidth = 1;
   hfdcan1.Init.NominalTimeSeg1 = 13;
   hfdcan1.Init.NominalTimeSeg2 = 2;
@@ -440,7 +442,7 @@ static void MX_FDCAN2_Init(void)
   hfdcan2.Init.AutoRetransmission = DISABLE;
   hfdcan2.Init.TransmitPause = DISABLE;
   hfdcan2.Init.ProtocolException = DISABLE;
-  hfdcan2.Init.NominalPrescaler = 10;
+  hfdcan2.Init.NominalPrescaler = 5;
   hfdcan2.Init.NominalSyncJumpWidth = 1;
   hfdcan2.Init.NominalTimeSeg1 = 13;
   hfdcan2.Init.NominalTimeSeg2 = 2;
@@ -448,7 +450,7 @@ static void MX_FDCAN2_Init(void)
   hfdcan2.Init.DataSyncJumpWidth = 1;
   hfdcan2.Init.DataTimeSeg1 = 1;
   hfdcan2.Init.DataTimeSeg2 = 1;
-  hfdcan2.Init.MessageRAMOffset = 0;
+  hfdcan2.Init.MessageRAMOffset = 304;
   hfdcan2.Init.StdFiltersNbr = 0;
   hfdcan2.Init.ExtFiltersNbr = 2;
   hfdcan2.Init.RxFifo0ElmtsNbr = 0;

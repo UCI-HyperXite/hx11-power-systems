@@ -47,12 +47,14 @@ void process_CAN250_msgs(void) {
 		//NOTE: ID 1713 is coming from the VFD
 
 		case 0x10F8109A:
+			//284692634
 			speedLSB = currentMessage.data[1];	// LSB of speed 1 RPM/bit
 			speedMSB = currentMessage.data[2];  // MSB of speed
 			errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
 			break;
 		//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
 		case 0x10F8108D:
+			//284692621
 			batteryVoltageLSB = currentMessage.data[0];	// 0.1 V/bit
 			batteryVoltageMSB = currentMessage.data[1];
 			motorCurrentLSB = currentMessage.data[2];	// 0.1 A.bit
@@ -94,6 +96,7 @@ void process_CAN500_msgs(void) {
 		//other can peripherals can be added here as cases w/ their ID
 		switch (currentMessage.id) {
 		case 0x18FF01F4:
+			//419365364
 			// imd
 			insulationResistance = concatenate(currentMessage.data[0], currentMessage.data[1]);
 			iso_status = currentMessage.data[2];
@@ -103,6 +106,7 @@ void process_CAN500_msgs(void) {
 			break;
 
 		case 0x10DEADBE:
+			// 283028926
 			// bms
 			lowestCellVoltage = concatenate(currentMessage.data[0], currentMessage.data[1]);
 			avgCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
