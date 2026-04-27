@@ -80,31 +80,9 @@ int debug3;
 int debug4;
 int debug5;
 
-uint8_t speedLSB;
-uint8_t speedMSB;
-uint8_t errorCode;
-uint8_t batteryVoltageLSB;
-uint8_t batteryVoltageMSB;
-uint8_t motorCurrentLSB;
-uint8_t motorCurrentMSB;
-uint8_t motorTempLSB;
-uint8_t motorTempMSB;
-uint8_t controllerTempLSB;
-uint8_t controllerTempMSB;
-
-uint16_t totalspeed;
-
-uint8_t packSOC;
-uint16_t lowestCellVoltage;
-uint16_t avgCellVoltage;
-uint16_t highestCellVoltage;
-int bmsTestCounter;
-
-uint16_t insulationResistance;
-uint8_t iso_status;
-uint8_t imd_counter;
-uint16_t imd_warnings;
-uint8_t deviceActivity;
+VFD_CAN_Data vfdData;
+BMS_CAN_Data bmsData;
+IMD_CAN_Data imdData;
 
 /* USER CODE END 0 */
 
@@ -240,6 +218,11 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Infinite loop */
+
+
+  // Struct Definitions
+
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {		//CAN testing
@@ -249,8 +232,9 @@ int main(void)
 	  	HAL_Delay(500);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
 		HAL_Delay(500);
-		//process_CAN250_msgs();
-		//process_CAN500_msgs();
+
+		process_CAN250_msgs(&vfdData);
+		process_CAN500_msgs(&bmsData, &imdData);
 
 		debug1 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan2, FDCAN_RX_FIFO1);
 		debug2 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
