@@ -155,7 +155,6 @@ int main(void)
 
 
   //CAN2 filter (250)
-
   FDCAN_FilterTypeDef filter2;
   filter2.IdType = FDCAN_EXTENDED_ID;
   filter2.FilterIndex = 1;
@@ -169,7 +168,6 @@ int main(void)
 
 
   // CAN1 filter (500)
-
   FDCAN_FilterTypeDef filter1;
   filter1.IdType = FDCAN_EXTENDED_ID;
   filter1.FilterIndex = 0;
