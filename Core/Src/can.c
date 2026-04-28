@@ -34,7 +34,7 @@ double concatenate(uint8_t x, uint8_t y){
 }
 
 double rpm_to_ms(double rpm) {
-    return (2 * M_PI * (.00395) * rpm) / 60.0;
+    return (2 * M_PI * (RADIUS) * rpm) / 60.0;
 }
 
 /* Stores any random ID's seen */

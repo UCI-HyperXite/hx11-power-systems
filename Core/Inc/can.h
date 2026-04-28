@@ -8,6 +8,7 @@
 
 #define CAN_QUEUE_SIZE 32
 #define UNKNOWN_LOG_SIZE 32
+#define RADIUS 0.00395
 
 typedef struct {
 	uint32_t id;
