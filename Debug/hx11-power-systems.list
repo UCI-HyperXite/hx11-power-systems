@@ -21,9 +21,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 0000002e  00000000  00000000  00009010  2**0
                   CONTENTS, READONLY
-  9 .debug_info   00019ecf  00000000  00000000  0000903e  2**0
+  9 .debug_info   00019ed0  00000000  00000000  0000903e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_abbrev 00002c86  00000000  00000000  00022f0d  2**0
+ 10 .debug_abbrev 00002c85  00000000  00000000  00022f0e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  11 .debug_aranges 000014f8  00000000  00000000  00025b98  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -224,9 +224,9 @@ void process_CAN250_msgs(VFD_CAN_Data *vfdData) {
  80003d2:	7c3a      	ldrb	r2, [r7, #16]
  80003d4:	687b      	ldr	r3, [r7, #4]
  80003d6:	701a      	strb	r2, [r3, #0]
-			vfdData -> encoderSpeed = rpm_to_ms(concatenate(currentMessage.data[2], currentMessage.data[1]));
- 80003d8:	7cbb      	ldrb	r3, [r7, #18]
- 80003da:	7c7a      	ldrb	r2, [r7, #17]
+			vfdData -> encoderSpeed = rpm_to_ms(concatenate(currentMessage.data[1], currentMessage.data[2]));
+ 80003d8:	7c7b      	ldrb	r3, [r7, #17]
+ 80003da:	7cba      	ldrb	r2, [r7, #18]
  80003dc:	4611      	mov	r1, r2
  80003de:	4618      	mov	r0, r3
  80003e0:	f7ff ff7a 	bl	80002d8 <concatenate>
@@ -876,10 +876,10 @@ int main(void)
   HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
  8000880:	2016      	movs	r0, #22
  8000882:	f001 f83c 	bl	80018fe <HAL_NVIC_EnableIRQ>
+*/
 
 
   //CAN2 filter (250)
-
   FDCAN_FilterTypeDef filter2;
   filter2.IdType = FDCAN_EXTENDED_ID;
  8000886:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
@@ -907,8 +907,8 @@ int main(void)
  80008a8:	f001 feae 	bl	8002608 <HAL_FDCAN_ConfigFilter>
 
 
-  // CAN1 filter (500)
 
+  // CAN1 filter (500)
   FDCAN_FilterTypeDef filter1;
   filter1.IdType = FDCAN_EXTENDED_ID;
  80008ac:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000

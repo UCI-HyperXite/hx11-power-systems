@@ -67,7 +67,7 @@ void process_CAN250_msgs(VFD_CAN_Data *vfdData) {
 		case 0x10F8109A:
 			// ID (decimal): 284692634
 			vfdData -> drivingDirection = currentMessage.data[0];
-			vfdData -> encoderSpeed = rpm_to_ms(concatenate(currentMessage.data[2], currentMessage.data[1]));
+			vfdData -> encoderSpeed = rpm_to_ms(concatenate(currentMessage.data[1], currentMessage.data[2]));
 			vfdData -> errorCode = currentMessage.data[3];	//see table 1 of Kelly VFD datasheet
 			break;
 		//KELLY VFD - 0x10F8108D (battery voltage, motor current, motor temp, controller temp)
@@ -98,18 +98,18 @@ void process_CAN500_msgs(BMS_CAN_Data *bmsData, IMD_CAN_Data *imdData) {
 		// IMD ID
 		case 0x18FF01F4:
 			//419365364
-			imdData->insulationResistance = concatenate(currentMessage.data[0], currentMessage.data[1]);
+			imdData->insulationResistance = concatenate(currentMessage.data[1], currentMessage.data[0]);
 			imdData->iso_status = currentMessage.data[2];
 			imdData->imd_counter = currentMessage.data[3];
-			imdData->imd_warnings = concatenate(currentMessage.data[4], currentMessage.data[5]);
+			imdData->imd_warnings = concatenate(currentMessage.data[5], currentMessage.data[4]);
 			imdData->deviceActivity = currentMessage.data[6];
 			break;
 
 		case 0x10DEADBE:
 			// ID (decimal): 283028926
-			bmsData->lowestCellVoltage = concatenate(currentMessage.data[0], currentMessage.data[1]);
-			bmsData->avgCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
-			bmsData->highestCellVoltage = concatenate(currentMessage.data[4], currentMessage.data[5]);
+			bmsData->lowestCellVoltage = concatenate(currentMessage.data[1], currentMessage.data[0]);
+			bmsData->avgCellVoltage = concatenate(currentMessage.data[3], currentMessage.data[2]);
+			bmsData->highestCellVoltage = concatenate(currentMessage.data[5], currentMessage.data[4]);
 			bmsData->packSOC = currentMessage.data[6];
 			bmsData->bmsTestCounter = currentMessage.data[7];
 			break;
