@@ -223,9 +223,7 @@ int main(void)
 
   /* USER CODE BEGIN WHILE */
   while (1)
-  {		//CAN testing
-
-	  	//debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+  {		/*CAN testing
 
 	  	HAL_Delay(500);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
@@ -237,6 +235,16 @@ int main(void)
 		debug1 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan2, FDCAN_RX_FIFO1);
 		debug2 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
 
+	  	*/
+
+	  	// DAC Testing
+	  	DAC_SetHigh();
+
+	  	HAL_Delay(10000);
+
+	  	DAC_SetLow();
+
+	  	HAL_Delay(10000);
 
 
     /* USER CODE END WHILE */
