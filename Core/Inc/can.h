@@ -40,11 +40,15 @@ typedef struct{
 	// in V
 	double lowestCellVoltage;
 	// in V
-	double avgCellVoltage;
+	double highestTemp;
 	// in V
 	double highestCellVoltage;
 	double packSOC;
 	uint8_t bmsTestCounter;
+	uint8_t relayStatus;
+	double packVoltage;
+	double lowestTemp;
+
 }BMS_CAN_Data;
 
 typedef struct{

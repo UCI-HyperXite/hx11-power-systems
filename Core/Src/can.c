@@ -108,10 +108,16 @@ void process_CAN500_msgs(BMS_CAN_Data *bmsData, IMD_CAN_Data *imdData) {
 		case 0x10DEADBE:
 			// ID (decimal): 283028926
 			bmsData->lowestCellVoltage = concatenate(currentMessage.data[0], currentMessage.data[1]);
-			bmsData->avgCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
-			bmsData->highestCellVoltage = concatenate(currentMessage.data[4], currentMessage.data[5]);
-			bmsData->packSOC = currentMessage.data[6];
-			bmsData->bmsTestCounter = currentMessage.data[7];
+			bmsData->highestCellVoltage = concatenate(currentMessage.data[2], currentMessage.data[3]);
+			bmsData->packSOC = currentMessage.data[4];
+			bmsData->highestTemp = currentMessage.data[5];
+			bmsData->bmsTestCounter = currentMessage.data[6];
+			break;
+
+		case 0x10DEADBB:
+			bmsData->relayStatus = currentMessage.data[0];
+			bmsData->packVoltage = concatenate(currentMessage.data[1], currentMessage.data[2]);
+			bmsData->lowestTemp = currentMessage.data[3];
 			break;
 		default:
 			if(!isDuplicate(currentMessage.id)){
