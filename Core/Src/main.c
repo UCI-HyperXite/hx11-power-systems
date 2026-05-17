@@ -79,6 +79,12 @@ int debug2;
 int debug3;
 int debug4;
 int debug5;
+int debug_TEC;
+int debug_REC;
+int debug_PSR;
+int debug_CCCR;
+int debug_head500_snap;
+int debug_tail500_snap;
 
 VFD_CAN_Data vfdData;
 BMS_CAN_Data bmsData;
@@ -223,20 +229,48 @@ int main(void)
 
   /* USER CODE BEGIN WHILE */
   while (1)
-  {		//CAN testing
+  {		 // can debugging
+	  HAL_Delay(500);
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+	  HAL_Delay(500);
 
-	  	//debug0 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  process_CAN250_msgs();
+	  process_CAN500_msgs();
 
-	  	HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-		HAL_Delay(500);
+	  // --- HARDWARE FIFO FILL LEVELS ---
+	  // debug1 > 0 and not draining = interrupt not firing
+	  // debug1 = 0 and can2_rx_count moving = draining correctly (good)
+	  // debug1 = 0 and can2_rx_count stuck = nothing arriving at hardware level
+	  debug1 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan2, FDCAN_RX_FIFO1); // CAN2 (BMS)
+	  debug2 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0); // CAN1 (VFD)
 
-		process_CAN250_msgs(&vfdData);
-		process_CAN500_msgs(&bmsData, &imdData);
+	  // --- BUS ERROR COUNTERS ---
+	  // TEC 0      = no errors, good
+	  // TEC 1-127  = error active, degraded but working
+	  // TEC 128-254= error passive, BMS retransmitting heavily
+	  // TEC 255    = Bus-Off, FDCAN2 fully dead until manual recovery
+	  // REC near 0 = BMS transmitting cleanly
+	  // REC rising = baud rate mismatch or bad signal
+	  debug_TEC = (int)((hfdcan2.Instance->ECR & 0xFF00) >> 8);
+	  debug_REC = (int)(hfdcan2.Instance->ECR & 0x00FF);
 
-		debug1 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan2, FDCAN_RX_FIFO1);
-		debug2 = HAL_FDCAN_GetRxFifoFillLevel(&hfdcan1, FDCAN_RX_FIFO0);
+	  // --- PROTOCOL STATUS REGISTER ---
+	  // Bits [2:0]: 0=syncing, 1=idle (OK), 2=receiving (OK), 3=transmitting
+	  // Bit  [7]:   Error Passive flag
+	  // Bit  [8]:   Bus-Off flag — if set, TEC=255 confirmed
+	  debug_PSR = hfdcan2.Instance->PSR;
 
+	  // --- CONTROL REGISTER ---
+	  // 0x00000000 = normal operation (good)
+	  // Bit 6 set  = Bus Monitoring / listen-only active
+	  // Bit 4 set  = Restricted mode (bad, shouldn't be set)
+	  debug_CCCR = hfdcan2.Instance->CCCR;
+
+	  // --- SOFTWARE QUEUE HEALTH ---
+	  // head == tail always = queue always empty
+	  // gap stuck at CAN_QUEUE_SIZE-1 = queue full, dropping messages
+	  debug_head500_snap = head500;
+	  debug_tail500_snap = tail500;
 
 
     /* USER CODE END WHILE */
@@ -371,7 +405,7 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
   hfdcan1.Init.ProtocolException = DISABLE;
-  hfdcan1.Init.NominalPrescaler = 10;
+  hfdcan1.Init.NominalPrescaler = 5;
   hfdcan1.Init.NominalSyncJumpWidth = 1;
   hfdcan1.Init.NominalTimeSeg1 = 13;
   hfdcan1.Init.NominalTimeSeg2 = 2;
