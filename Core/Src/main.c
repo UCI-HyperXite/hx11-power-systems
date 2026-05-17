@@ -213,6 +213,19 @@ int main(void)
   //=============================================================================
 
   //PID throttlePID;
+
+  //mcp4725 inti check
+  if (MCP4725_CheckAlive() == HAL_OK)
+    {
+  	  printf("MCP4725 detected\n");
+  	  debug5 = 1;
+    }
+    if (MCP4725_CheckAlive() != HAL_OK)
+    {
+  	  printf("MCP4725 NOT detected\n");
+  	  debug5 = 2;
+    }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
